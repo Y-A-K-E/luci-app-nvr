@@ -4,9 +4,11 @@
 function main() {
 	test_totaldays
 	test_loopwrite
+	i=1
 	for a in $_all_clients;do
 		theday="$(date +%Y-%m-%d)"
-		thedir=$(echo $a | sed 's/\///g')
+		#thedir=$(echo $a | sed 's/\///g') #这个做路径非常不友好
+		thedir=${i} # 通道名目录
 		if [ ! -d "$_directory/$theday/$thedir" ];then
 			mkdir -p "$_directory/$theday/$thedir"
 		fi
@@ -19,15 +21,18 @@ function main() {
 		elif [ "$_source" = "multiple-types" ];then
 			_input="$a"
 		fi
-		#if [ ! -f "${_directory}/${theday}/${thedir}/${thename}.mp4" ];then
+		thename="$(date +%Y-%m-%d-%H:%M:%S)"
+		# 屏蔽强行结束功能，会导致录制的MP4视频无法播放。
+		#if [ ! -f "${_directory}/${theday}/${thedir}/${thename}.*" ];then
 		#	kill -9 "$(ps -w | grep ffmpeg | grep "${_input}" | grep -v grep | grep -v "\-f flv")"
 		#fi
-		thename="$(date +%Y-%m-%d-%H:%M:%S)"
+
 		if [ "$_enable_audio" -eq 1 ];then
 			ffmpeg -i "${_input}" -c copy -t ${_rec_time} "${_directory}/${theday}/${thedir}/${thename}.mp4" &
 		else
 			ffmpeg -i "${_input}" -c copy -an -t ${_rec_time} "${_directory}/${theday}/${thedir}/${thename}.mp4" &
 		fi
+		i=$((i + 1))
 	done
 	sleep $(expr ${_rec_time} - 3)
 }
