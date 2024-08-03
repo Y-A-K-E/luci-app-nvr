@@ -19,17 +19,17 @@ function main() {
 		elif [ "$_source" = "multiple-types" ];then
 			_input="$a"
 		fi
-		if [ ! -f "${_directory}/${theday}/${thedir}/${thename}.*" ];then
-			kill -9 "$(ps -w | grep ffmpeg | grep "${_input}" | grep -v grep | grep -v "\-f flv")"
-		fi
+		#if [ ! -f "${_directory}/${theday}/${thedir}/${thename}.mp4" ];then
+		#	kill -9 "$(ps -w | grep ffmpeg | grep "${_input}" | grep -v grep | grep -v "\-f flv")"
+		#fi
 		thename="$(date +%Y-%m-%d-%H:%M:%S)"
 		if [ "$_enable_audio" -eq 1 ];then
-			ffmpeg -i "${_input}" -c copy -t ${_rec_time} "${_directory}/${theday}/${thedir}/${thename}.mkv" &
+			ffmpeg -i "${_input}" -c copy -t ${_rec_time} "${_directory}/${theday}/${thedir}/${thename}.mp4" &
 		else
-			ffmpeg -i "${_input}" -vcodec copy -an -t ${_rec_time} "${_directory}/${theday}/${thedir}/${thename}.mp4" &
+			ffmpeg -i "${_input}" -c copy -an -t ${_rec_time} "${_directory}/${theday}/${thedir}/${thename}.mp4" &
 		fi
 	done
-	sleep $(expr ${_rec_time} - 6)
+	sleep $(expr ${_rec_time} - 3)
 }
 
 while true;do
